@@ -1,64 +1,101 @@
-//import javafoundations.*;
-import javafoundations.exceptions.*;
 import java.util.*; 
 
 public class SnakeBody {
-  // Instance variables:
-  private LinkedList<String> body;
+  
+  // Instance variables:  
+  private final int GAME_SIZE = 50;
   private int snakeLength;
-  private int[][] game = new int[50][50];
+  private int[][] game;
+  private String direction;
+  private LinkedList<String> body; //this is one part of the body
   
   // Constructor: given a length of a snake, make a linked list of that size.
   public SnakeBody() {
-    this.length = length;
-    //Makes a new empty linked list
-    LinkedList<String> body = new LinkedList<String>;
+    game = new int[GAME_SIZE][GAME_SIZE];
+    body = new LinkedList<String>();
+    body.add("0, " + Integer.toString(GAME_SIZE/2));
+    snakeLength = body.size();
   }
     
-  /**
-   * Method for getting the updated coordinates, or the snake's next motion, given an array
-   */
-  public void getNextState() {
-    //Assuming we have a complete snake with everything we need:
-    //get the second element's coordinates by removing the head and accessing the new head's string
-    
-    
-    //then add the original head back to the front using the addFirst method
-    
-    //Get delta x-coords and delta y-coords, delete the last element and add a new element to the front
-    //the new element should represent the (x_head + delta_x, y_head + delta_y)
-    
-    
-    //Given the new linkedlist, plot the results on a new array and make that the new game array
+  public LinkedList<String> getBody () {
+    return body;
   }
   
+  public void move(String direction) {
+    for (int i = body.size()-1; i >= 1; i--) {
+      String new_coord = body.get(i-1);
+      body.set(i, new_coord);
+    }
+    
+    String s = body.get(0);
+    int[] coords = convertCoordstoInt(s);
+    if (direction.equals("R")) {
+      coords[0]++;
+    } else if (direction.equals("L")) {
+      coords[0]--;
+    } else if (direction.equals("U")) { //remember that up *subtracts* from the y-coordinate!
+      coords[1]--;
+    } else if (direction.equals("D")) {
+      coords[1]++;
+    }
+    s = convertCoordstoString(coords);
+    body.set(0, s);
+  }
+  
+  private int[] convertCoordstoInt (String input) {
+    String[] coords = input.split(", ");
+    int[] finalcoords = new int[2];
+    
+    finalcoords[0] = Integer.parseInt(coords[0]);
+    finalcoords[1] = Integer.parseInt(coords[1]);
+    
+    return finalcoords;
+  }
+  
+    private String convertCoordstoString (int[] input) {
+    String finalcoords = input[0] + ", " + input[1];
+    return finalcoords;
+  }
+  
+  public boolean isDead() {
+    String head = body.get(0); // retrieve the head of the snake
+    int[] coords = convertCoordstoInt(head);
+    if (coords[0]<0 || coords[0]>50 || coords[1]<0 || coords[1]>50) {
+      return true;
+    } else if (hasDuplicates()) {
+      return true;
+    }
+    return false;
+  }
   
   /** 
-   * Helper method for getting the length of the snake
+   * Helper method seeing if the snake goes into itself
    */
-  private int getLength() {
-    
+  private boolean hasDuplicates() {
+    return body.lastIndexOf(body.getFirst()) != 0;
   }
   
+  public void addSegment (String tail) {
+    body.add(tail);
+  }
+  
+  /**
+   * Get the string representation of the Snake Body
+   */
   public String toString() {
-    s = ""
+    String s = "";
+    for (int i = 0; i < body.size(); i++){
+      
+    }
     return s;
   }
   
   public static void main(String[] args) {
-    SnakeBody snake = new Snakebody();
-    System.out.println(snake);
-    //Using LinearNodes in a list:
-    String head1 = "1 1"; // first head
-    String head2 = "1 2"; // add part two
-    String head3 = "1 3"; // add part three
-    
-    LinearNode<String> front; //refers to the first node in list
-    LinearNode<String> temp; //refers to new node as it is being added to list
-    front = new LinearNode<String>(head2); //List should contain two nodes, I hope.
-    
-    
-    
-    
+    SnakeBody snake = new SnakeBody();
+    System.out.println(snake.getBody());
+    String tail = snake.getBody().getLast();
+    snake.move("L");
+    snake.addSegment(tail);
+    System.out.println(snake.getBody());
   }
 }
