@@ -4,63 +4,41 @@ public class SnakeBody {
   
   // Instance variables:  
   private final int GAME_SIZE = 50;
-  private int snakeLength;
-  private int[][] game;
-  private String direction;
-  private LinkedList<String> body; //this is one part of the body
+  private LinkedList<Location> body; //this is one part of the body
   
   // Constructor: given a length of a snake, make a linked list of that size.
   public SnakeBody() {
-    game = new int[GAME_SIZE][GAME_SIZE];
-    body = new LinkedList<String>();
-    body.add("0, " + Integer.toString(GAME_SIZE/2));
-    snakeLength = body.size();
+    body = new LinkedList<Location>();
+    body.add(new Location(0, (GAME_SIZE/2)));
   }
     
-  public LinkedList<String> getBody () {
+  public LinkedList<Location> getBody () {
     return body;
   }
   
   public void move(String direction) {
-    for (int i = body.size()-1; i >= 1; i--) {
-      String new_coord = body.get(i-1);
-      body.set(i, new_coord);
+    for (int i = body.size()-1; i >= 1; i--) { // Update all segments except head
+      body.set(i, body.get(i-1));
     }
     
-    String s = body.get(0);
-    int[] coords = convertCoordstoInt(s);
+    Location head = body.get(0);
+    Location new_head = head;
+    
     if (direction.equals("R")) {
-      coords[0]++;
+      new_head = new Location(head.getX() + 1, head.getY());
     } else if (direction.equals("L")) {
-      coords[0]--;
+      new_head = new Location(head.getX() - 1, head.getY());
     } else if (direction.equals("U")) { //remember that up *subtracts* from the y-coordinate!
-      coords[1]--;
+      new_head = new Location(head.getX(), head.getY() - 1);
     } else if (direction.equals("D")) {
-      coords[1]++;
+      new_head = new Location(head.getX(), head.getY() + 1);
     }
-    s = convertCoordstoString(coords);
-    body.set(0, s);
-  }
-  
-  private int[] convertCoordstoInt (String input) {
-    String[] coords = input.split(", ");
-    int[] finalcoords = new int[2];
-    
-    finalcoords[0] = Integer.parseInt(coords[0]);
-    finalcoords[1] = Integer.parseInt(coords[1]);
-    
-    return finalcoords;
-  }
-  
-    private String convertCoordstoString (int[] input) {
-    String finalcoords = input[0] + ", " + input[1];
-    return finalcoords;
+    body.set(0, new_head);
   }
   
   public boolean isDead() {
-    String head = body.get(0); // retrieve the head of the snake
-    int[] coords = convertCoordstoInt(head);
-    if (coords[0]<0 || coords[0]>50 || coords[1]<0 || coords[1]>50) {
+    Location head = body.get(0); // retrieve the head of the snake
+    if (head.getX() < 0 || head.getX() > 50 || head.getY() < 0 || head.getY() > 50) {
       return true;
     } else if (hasDuplicates()) {
       return true;
@@ -75,7 +53,7 @@ public class SnakeBody {
     return body.lastIndexOf(body.getFirst()) != 0;
   }
   
-  public void addSegment (String tail) {
+  public void addSegment (Location tail) {
     body.add(tail);
   }
   
@@ -93,8 +71,8 @@ public class SnakeBody {
   public static void main(String[] args) {
     SnakeBody snake = new SnakeBody();
     System.out.println(snake.getBody());
-    String tail = snake.getBody().getLast();
-    snake.move("L");
+    Location tail = snake.getBody().getLast();
+    snake.move("R");
     snake.addSegment(tail);
     System.out.println(snake.getBody());
   }
