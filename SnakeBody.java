@@ -2,28 +2,32 @@ import java.util.*;
 
 public class SnakeBody {
   
-  // Instance variables:  
+  // Instance variables -- defining the grid and initializing the snake's body as a linkedlist of location objects:
   private final int GAME_SIZE = 50;
-  private LinkedList<Location> body; //this is one part of the body
+  private LinkedList<Location> body; 
   
-  // Constructor: given a length of a snake, make a linked list of that size.
+  // Constructor -- defining the snake's body
   public SnakeBody() {
     body = new LinkedList<Location>();
     body.add(new Location(0, (GAME_SIZE/2)));
   }
-    
+  
+
   public LinkedList<Location> getBody () {
     return body;
   }
   
+  /**
+  * Updates the body according to a string 'direction' that determines where the head goes
+  */
   public void move(String direction) {
     for (int i = body.size()-1; i >= 1; i--) { // Update all segments except head
       body.set(i, body.get(i-1));
     }
-    
+    //obtaining the head of the snake:
     Location head = body.get(0);
     Location new_head = head;
-    
+    //places the head according to the string inputted into this method:
     if (direction.equals("R")) {
       new_head = new Location(head.getX() + 1, head.getY());
     } else if (direction.equals("L")) {
@@ -36,6 +40,11 @@ public class SnakeBody {
     body.set(0, new_head);
   }
   
+  /**
+  * Returns whether the snake is alive by checking for two conditions:
+  * 1. Is the head is out of bounds? 
+  * 2. Did its head intersect a part of its body? 
+  */
   public boolean isDead() {
     Location head = body.get(0); // retrieve the head of the snake
     if (head.getX() < 0 || head.getX() > 50 || head.getY() < 0 || head.getY() > 50) {
@@ -47,12 +56,16 @@ public class SnakeBody {
   }
   
   /** 
-   * Helper method seeing if the snake goes into itself
+   * Helper method for seeing if the snake eats itself
    */
   private boolean hasDuplicates() {
     return body.lastIndexOf(body.getFirst()) != 0;
   }
   
+
+  /**
+  * Adds another Location object to the linkedlist
+  */
   public void addSegment (Location tail) {
     body.add(tail);
   }
