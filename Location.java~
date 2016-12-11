@@ -1,8 +1,3 @@
-/**
- * Location takes takes in x & y coordinates to 
- * define a specific coordinate in the Snake game grid.
- */
-
 public class Location {
   
   private int x;
@@ -13,9 +8,6 @@ public class Location {
     this.y = y;
   }
   
-  /**
-   * Getter and setter methods for each coordinate component:
-   */
   public int getX () {
     return x;
   }
@@ -32,9 +24,6 @@ public class Location {
     this.y = y;
   }
   
-  /**
-   * Returns a String representation of the location class
-   */
   public String toString () {
     return "(" + x + ", " + y + ")";
   }
@@ -43,5 +32,5 @@ public class Location {
     Location test = new Location(5, 2);
     System.out.println(test);
   }
-
+  
 }
