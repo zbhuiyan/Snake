@@ -1,5 +1,3 @@
-/** Returns the original Food hastable. */
-
 import java.util.*;
 
 public class Food {
