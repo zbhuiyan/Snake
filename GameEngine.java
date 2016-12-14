@@ -9,11 +9,13 @@
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import javax.swing.*; //For Java JFrame class
 import java.util.*;
-import java.time.Clock;
+import java.lang.InterruptedException;
+// import java.time.Clock;
 
-public class GameEngine{
+public class GameEngine implements KeyListener{
 
 // Instance variables
 	private static final long TIME_BETWEEN_FRAMES = 1000L / 50L; //Number of ms to pass between each frame.
@@ -31,7 +33,6 @@ public class GameEngine{
 	private SnakeBody snake;
 	private Location foodLocation;
 	private int foodValue;
-	// next fruit score?
 
 
 	/**
@@ -44,43 +45,48 @@ public class GameEngine{
 		this.snakePanel = new SnakePanel(); //Initialize game panels.
 
 		// KeyAdapter adapter = new KeyAdapter();
-		this.addKeyListener(new KeyAdapter()){
-			@Override 
-			public void keyPressed(KeyEvent e){
-				int keyCode = e.getKeyCode(); //getKeyCode returns the integer KeyCode associated with the key
-				int directionSize = directions.size(); //current size of LinkedList
+		// addKeyListener(new KeyAdapter()){
 			
-				switch(keyCode){ 
-					case KeyEvent.VK_UP:
-						if((!isPaused && !isGameOver) && (directionSize < MAX_DIRECTIONS)){
-							directions.addLast("U");
-						}
-						break;
-					case KeyEvent.VK_DOWN:
-						if((!isPaused && !isGameOver) && (directionSize < MAX_DIRECTIONS)){
-							directions.addLast("D");
-						}
-						break;
-					case KeyEvent.VK_LEFT:
-						if((!isPaused && !isGameOver) && (directionSize < MAX_DIRECTIONS)){
-							directions.addLast("L");
-						}
-						break;
-					case KeyEvent.VK_RIGHT:
-						if((!isPaused && !isGameOver) && (directionSize < MAX_DIRECTIONS)){
-							directions.addLast("R");
-						}
-						break;
-					case KeyEvent.VK_SPACE: 
-						if(!isGameOver){
-							this.isPaused = !isPaused; //So the user can pause and unpause the game
-							clock.pause(isPaused); // Sets the isPaused to be what it is currently after negating							
-						}
-					}						
-				}
-			}
-		}	
+		// }	
 	}
+	public void keyReleased(KeyEvent e) { }
+    public void keyTyped(KeyEvent e) {}
+
+
+ 
+	public void keyPressed(KeyEvent e){
+		int keyCode = e.getKeyCode(); //getKeyCode returns the integer KeyCode associated with the key
+		int directionSize = directions.size(); //current size of LinkedList
+	
+		switch(keyCode){ 
+			case KeyEvent.VK_UP:
+				if((!isPaused && !isGameOver) && (directionSize < MAX_DIRECTIONS)){
+					directions.addLast("U");
+				}
+				break;
+			case KeyEvent.VK_DOWN:
+				if((!isPaused && !isGameOver) && (directionSize < MAX_DIRECTIONS)){
+					directions.addLast("D");
+				}
+				break;
+			case KeyEvent.VK_LEFT:
+				if((!isPaused && !isGameOver) && (directionSize < MAX_DIRECTIONS)){
+					directions.addLast("L");
+				}
+				break;
+			case KeyEvent.VK_RIGHT:
+				if((!isPaused && !isGameOver) && (directionSize < MAX_DIRECTIONS)){
+					directions.addLast("R");
+				}
+				break;
+			case KeyEvent.VK_SPACE: 
+				if(!isGameOver){
+					this.isPaused = !isPaused; //So the user can pause and unpause the game
+					clock.pause(isPaused); // Sets the isPaused to be what it is currently after negating							
+				}						
+		}
+	}
+
 
 
 	/**
@@ -91,22 +97,25 @@ public class GameEngine{
 	public void beginGame(){
 		this.snake = new SnakeBody();
 		this.directions = new LinkedList<String>();
-		this.clock = new Clock();
+		clock = new Clock(3.0f);
 		this.isNewGame = true;
 
 		while(true){
 			long startTime = System.nanoTime(); //Precise start time for current frame
-			clock.update();
+			// clock.update();
+			snakePanel.moveSnake(snake.getBody()); // This repaints the board
+			long time = (System.nanoTime() - startTime)/1000000L;
+
 			if (clock.hasPassedCycle()){
 				this.updateGame();
 			}
-
-			snakePanel.moveSnake(snake.getBody());
-
-			long time = (System.nanoTime() - startTime)/1000000L;
-
-			if (time < TIME_BETWEEN_FRAMES){
-				Thread.sleep(TIME_BETWEEN_FRAMES - time);
+			try{
+				if (time < TIME_BETWEEN_FRAMES){
+					Thread.sleep(TIME_BETWEEN_FRAMES - time);
+				}
+			}
+			catch(InterruptedException ex){
+				System.out.println("Error: " + ex);
 			}
 		}
 	}
@@ -114,17 +123,13 @@ public class GameEngine{
 
 	public Location spawnFood(){
 		this.random = new Random();
-		this.foodLocation = new Location(Random.nextInt(50), Random.nextInt(50)); //Get random location for number of free spaces on board
+		this.foodLocation = new Location(random.nextInt(50), random.nextInt(50)); //Get random location for number of free spaces on board
 		return this.foodLocation;
 	}	
 
 
 	public void updateGame(){
-		//Figure out which type of tile the head of snake collided 
-		//with. It can hit either fruit, snakebody, or wall. 
-		// Use snakebody dead method to check
-
-		if (snake.isDead(){
+		if (snake.isDead()){
 			isGameOver = true;
 			clock.pause(true);
 		}
@@ -158,9 +163,9 @@ public class GameEngine{
 	}
 
 	/**
-	* This method gets the current Direction.
+	* This method gets the current direction.
 	*
-	* @return Direction  
+	* @return direction  
 	*/
 	public String getCurrentDirection(){
 		return this.directions.peek(); 
@@ -197,7 +202,7 @@ public class GameEngine{
 
 
 	public static void main(String[] args){
-
+		new SnakePanel();
 	}
 
 }
