@@ -4,20 +4,26 @@ import java.util.*;
 
 public class Food {
   
-  private Hashtable<String,Integer> food;
+  private Hashtable<Integer, String> food;
   
   public Food () {
-    food = new Hashtable<String,Integer>();
-    food.put("Red", 1);
-    food.put("Orange", 2);
-    food.put("Yellow", 3);
-    food.put("Green", 4);
-    food.put("Blue", 5);
-    food.put("Purple", 6);
+    food = new Hashtable<Integer, String>();
+    food.put(1, "Red");
+    food.put(2, "Orange");
+    food.put(3, "Yellow");
+    food.put(4, "Green");
+    food.put(5, "Blue");
+    food.put(6, "Purple");
   }
   
-  public Hashtable<String,Integer> getFood() {
+  public Hashtable<Integer, String> getFood() {
     return food;
+  }
+  
+  public String randomFood() {
+    Random r = new Random();
+    int n = r.nextInt(6) + 1;
+    return food.get(n);
   }
   
   public static void main (String[] args) {
