@@ -14,7 +14,8 @@ public class SnakeBody {
   // Constructor -- defining the snake's body
   public SnakeBody() {
     body = new LinkedList<Location>();
-    body.add(new Location(0, (GAME_SIZE/2)));
+    body.add(new Location(GAME_SIZE/2, GAME_SIZE/2));
+    body.add(new Location(GAME_SIZE/2, GAME_SIZE/2 + 1));
   }
   
   public LinkedList<Location> getBody () {
@@ -52,7 +53,8 @@ public class SnakeBody {
   * 2. Is the head intersecting a part of its body? 
   */
   public boolean isDead() {
-    Location head = body.get(0); // retrieve the head of the snake
+    Location head = body.peek(); // retrieve the head of the snake
+    
     if (head.getX() < 0 || head.getX() > 50 || head.getY() < 0 || head.getY() > 50) {
       return true;
     } else if (hasDuplicates()) {

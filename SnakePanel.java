@@ -180,17 +180,17 @@ public class SnakePanel extends JPanel {
     int pointValue = r.nextInt(5) + 1;
     String color = food.getFood().get(pointValue);
     if (color.equals("Red")) {
-      decorateButton(pixels[x][y], Color.RED);
+      decorateButton(pixels[y][x], Color.RED);
     } else if (color.equals("Orange")) {
-      decorateButton(pixels[x][y], Color.ORANGE);
+      decorateButton(pixels[y][x], Color.ORANGE);
     } else if (color.equals("Yellow")) {
-      decorateButton(pixels[x][y], Color.YELLOW);
+      decorateButton(pixels[y][x], Color.YELLOW);
     } else if (color.equals("Green")) {
-      decorateButton(pixels[x][y], Color.GREEN);
+      decorateButton(pixels[y][x], Color.GREEN);
     } else if (color.equals("Blue")) {
-      decorateButton(pixels[x][y], Color.BLUE);
+      decorateButton(pixels[y][x], Color.BLUE);
     } else {
-      decorateButton(pixels[x][y], Color.MAGENTA);
+      decorateButton(pixels[y][x], Color.MAGENTA);
     }
     return pointValue;
   }
@@ -201,11 +201,26 @@ public class SnakePanel extends JPanel {
    * @param   LinkedList body of snake
    */ 
   public void moveSnake (LinkedList<Location> body) {
-    while (!body.isEmpty()) {
-      Location current = body.remove();
+    for (int i = 0; i < body.size(); i++) {
+      Location current = body.get(i);
       int x = current.getX();
       int y = current.getY();
-      decorateButton(pixels[x][y], Color.BLACK);
+      decorateButton(pixels[y][x], Color.BLACK);
+    }
+  }
+  
+  public void eraseTail (SnakeBody body, String direction) {
+    Location tail = body.getBody().getLast();
+    int x = tail.getX();
+    int y = tail.getY();
+    if (direction.equals("D")) {
+      decorateButton(pixels[y-1][x], Color.WHITE);
+    } else if (direction.equals("U")) {
+      decorateButton(pixels[y+1][x], Color.WHITE);
+    } else if (direction.equals("R")) {
+      decorateButton(pixels[y][x-1], Color.WHITE);
+    } else if (direction.equals("L")) {
+      decorateButton(pixels[y][x+1], Color.WHITE);
     }
   }
   
