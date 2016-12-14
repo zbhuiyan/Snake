@@ -1,10 +1,12 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import java.util.*;
 
 public class SnakePanel extends JPanel {
   
   // Instance variables
+  private Food food;
   private JButton quit, start, pause;
   private JLabel status, foodpile;
   private boolean paused;
@@ -15,6 +17,8 @@ public class SnakePanel extends JPanel {
    * Constructor: Instantiates all instance variables.
    */
   public SnakePanel() {
+    food = new Food();
+    
     paused = false;
     
     // Game state buttons
@@ -55,7 +59,7 @@ public class SnakePanel extends JPanel {
     frame.setResizable(false);
     frame.pack();
     frame.setVisible(true);
-
+    
     frame.setLayout(new BorderLayout(10, 10));
     frame.setSize(1200, 1000);
     frame.add(makeNorthPanel(), BorderLayout.NORTH);
@@ -149,7 +153,7 @@ public class SnakePanel extends JPanel {
     rightPanel.add(Box.createVerticalGlue());
     rightPanel.add(eastPanel);
     rightPanel.add(Box.createVerticalGlue());
-
+    
     return rightPanel;
   }
   
@@ -163,6 +167,48 @@ public class SnakePanel extends JPanel {
     return westPanel;
   }
   
+  /*
+   * Places food in central panel.
+   * 
+   * @param   location of food
+   * @return  point value of food placed
+   **/
+  public int placeFood (Location location) {
+    int x = location.getX();
+    int y = location.getY();
+    Random r = new Random();
+    int pointValue = r.nextInt(5) + 1;
+    String color = food.getFood().get(pointValue);
+    if (color.equals("Red")) {
+      decorateButton(pixels[x][y], Color.RED);
+    } else if (color.equals("Orange")) {
+      decorateButton(pixels[x][y], Color.ORANGE);
+    } else if (color.equals("Yellow")) {
+      decorateButton(pixels[x][y], Color.YELLOW);
+    } else if (color.equals("Green")) {
+      decorateButton(pixels[x][y], Color.GREEN);
+    } else if (color.equals("Blue")) {
+      decorateButton(pixels[x][y], Color.BLUE);
+    } else {
+      decorateButton(pixels[x][y], Color.MAGENTA);
+    }
+    return pointValue;
+  }
+  
+  /**
+   * Moves and places segments of snake body in central panel.
+   * 
+   * @param   LinkedList body of snake
+   */ 
+  public void moveSnake (LinkedList<Location> body) {
+    while (!body.isEmpty()) {
+      Location current = body.remove();
+      int x = current.getX();
+      int y = current.getY();
+      decorateButton(pixels[x][y], Color.BLACK);
+    }
+  }
+  
   /**
    * ButtonListener is a private class for responding to button push events.
    */
@@ -170,7 +216,7 @@ public class SnakePanel extends JPanel {
     
     public void actionPerformed (ActionEvent event) {
       if (event.getSource() == quit) {
-          System.exit(0);
+        System.exit(0);
       }
       
       if (event.getSource() == start) {
