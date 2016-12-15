@@ -6,20 +6,13 @@
  * window creation.
  */
 
-
-//import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.*;
-//import javax.swing.*; //For Java JFrame class
 import java.util.*;
 import java.lang.InterruptedException;
-// import java.time.Clock;
 
-public class GameEngine implements KeyListener{
+public class GameEngine {
   
 // Instance variables
-  private static final long TIME_BETWEEN_FRAMES = 1000L / 50L; //Number of ms to pass between each frame.
-  private static final int MAX_DIRECTIONS = 2; //The number of maximum directions we can queue up.
+  private static final long TIME_BETWEEN_FRAMES = 100000L / 50L; //Number of ms to pass between each frame.
   private SnakePanel snakePanel;
   private Random random;
   private Clock clock;
@@ -27,7 +20,6 @@ public class GameEngine implements KeyListener{
   private boolean isGameOver;
   private boolean isPaused;
   private String direction;
-  private LinkedList<String> directions; //Linked list of Direction objects
   private int numFoodEaten;
   private int score;
   private SnakeBody snake;
@@ -49,50 +41,8 @@ public class GameEngine implements KeyListener{
     this.numFoodEaten = 0;
     this.score = 0;    
     this.snake = new SnakeBody();
-    this.direction = "D";
-    
-    // KeyAdapter adapter = new KeyAdapter();
-    // addKeyListener(new KeyAdapter()){
-    
-    // } 
-  }
-  
-  public void keyReleased(KeyEvent e) {}
-  public void keyTyped(KeyEvent e) {}
-  public void keyPressed(KeyEvent e){
-    int keyCode = e.getKeyCode(); //getKeyCode returns the integer KeyCode associated with the key
-    int directionSize = directions.size(); //current size of LinkedList
-    directions.addLast("D");
-    
-    switch(keyCode){ 
-      case KeyEvent.VK_UP:
-        if((!isPaused && !isGameOver) && (directionSize < MAX_DIRECTIONS)){
-        directions.addLast("U");
-      }
-        break;
-      case KeyEvent.VK_DOWN:
-        if((!isPaused && !isGameOver) && (directionSize < MAX_DIRECTIONS)){
-      }
-        break;
-      case KeyEvent.VK_LEFT:
-        if((!isPaused && !isGameOver) && (directionSize < MAX_DIRECTIONS)){
-        directions.addLast("L");
-      }
-        break;
-      case KeyEvent.VK_RIGHT:
-        if((!isPaused && !isGameOver) && (directionSize < MAX_DIRECTIONS)){
-        directions.addLast("R");
-      }
-        break;
-      case KeyEvent.VK_SPACE: 
-        if(!isGameOver){
-        this.isPaused = !isPaused; //So the user can pause and unpause the game
-        clock.pause(isPaused); // Sets the isPaused to be what it is currently after negating       
-      }      
-    }
-  }
-  
-  
+    this.direction = "D"; // Default direction
+  } 
   
   /**
    * This method sets up the game and the game loop which will run
@@ -100,7 +50,6 @@ public class GameEngine implements KeyListener{
    *  
    */
   public void beginGame(){
-    this.directions = new LinkedList<String>();
     clock = new Clock(3.0f);
     this.isNewGame = true;
     
@@ -112,7 +61,7 @@ public class GameEngine implements KeyListener{
       long time = (System.nanoTime() - startTime)/1000000L;
       
       if (clock.hasPassedCycle()){
-        this.updateGame();
+        updateGame();
       }
       
       try {
@@ -127,33 +76,38 @@ public class GameEngine implements KeyListener{
     }
   }
   
-  
   public Location spawnFood() {
     this.random = new Random();
     this.foodLocation = new Location(random.nextInt(50), random.nextInt(50)); //Get random location for number of free spaces on board
     return this.foodLocation;
   } 
   
-  
   public void updateGame(){
-    System.out.println("poo");
     if (snake.isDead()){
       isGameOver = true;
       clock.pause(true);
     }
+    
     else if (snake.getBody().get(0).equals(foodLocation)) {
       Location tail = snake.getBody().getLast();
+      direction = snakePanel.getCurrentDirection();
       snake.move(direction);
       snake.addSegment(tail);
       this.score += foodValue;
       this.spawnFood();
     }
+    
     else {
-      snake.move(direction);
-      snakePanel.eraseTail(snake, direction);
+      try {
+        direction = snakePanel.getCurrentDirection();
+        snake.move(direction);
+        snakePanel.eraseTail(snake, direction);
+      } catch (NoSuchElementException e) {
+        snake.move(direction);
+        snakePanel.eraseTail(snake, direction);
+      }
     }
   }
-  
   
   /**
    * This method gets the player's current score.
@@ -171,18 +125,7 @@ public class GameEngine implements KeyListener{
    */
   public int getNumFoodEaten(){
     return this.numFoodEaten;
-    
   }
-  
-  /**
-   * This method gets the current direction.
-   *
-   * @return direction  
-   */
-  public String getCurrentDirection(){
-    return this.directions.peek(); 
-  }
-  
   
   /**
    * This method returns whether the game is paused or not.
@@ -211,12 +154,9 @@ public class GameEngine implements KeyListener{
     return this.isGameOver;
   }
   
-  
-  
   public static void main(String[] args){
     GameEngine test = new GameEngine();
     test.beginGame();
-    
   }
   
 }
