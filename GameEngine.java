@@ -12,10 +12,9 @@ import java.lang.InterruptedException;
 public class GameEngine {
   
 // Instance variables
-  private static final long TIME_BETWEEN_FRAMES = 100000L / 50L; //Number of ms to pass between each frame.
+  private static final long TIME_BETWEEN_FRAMES = 10000L / 50L; //Number of ms to pass between each frame.
   private SnakePanel snakePanel;
   private Random random;
-  private Clock clock;
   private boolean isNewGame;
   private boolean isGameOver;
   private boolean isPaused;
@@ -50,19 +49,11 @@ public class GameEngine {
    *  
    */
   public void beginGame(){
-    clock = new Clock(3.0f);
     this.isNewGame = true;
     
     while (!isGameOver) {
-      long startTime = System.nanoTime(); //Precise start time for current frame
-      clock.updateClock();
       snakePanel.moveSnake(snake.getBody()); // This repaints the board
-      
-      long time = (System.nanoTime() - startTime)/1000000L;
-      
-      if (clock.hasPassedCycle()){
         updateGame();
-      }
       
       try {
         if (time < TIME_BETWEEN_FRAMES){
@@ -85,7 +76,6 @@ public class GameEngine {
   public void updateGame(){
     if (snake.isDead()){
       isGameOver = true;
-      clock.pause(true);
     }
     
     else if (snake.getBody().get(0).equals(foodLocation)) {
@@ -94,7 +84,7 @@ public class GameEngine {
       snake.move(direction);
       snake.addSegment(tail);
       this.score += foodValue;
-      this.spawnFood();
+      snakePanel.placeFood(this.spawnFood());
     }
     
     else {
