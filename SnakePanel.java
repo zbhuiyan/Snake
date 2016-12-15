@@ -14,6 +14,8 @@ public class SnakePanel extends JPanel {
   private JButton[][] foodQueue;
   private Queue<String> directions;
   private LinkedList<String> colorQueue;
+  private String pointCounter;
+  private JFrame frame;
   
   /**
    * Constructor: Instantiates all instance variables.
@@ -57,7 +59,7 @@ public class SnakePanel extends JPanel {
     foodpile = new JLabel("Food", JLabel.CENTER);
     
     // Create and customize frame
-    JFrame frame = new JFrame("Snake!");
+    frame = new JFrame("Snake!");
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.setResizable(false);
     frame.pack();
@@ -78,13 +80,14 @@ public class SnakePanel extends JPanel {
   }
   
   public void updateScore (int score) {
-    status.setText("Welcome to the Snake Game! Current score: " + Integer.toString(score));
+    pointCounter = Integer.toString(score);
+    status.setText("Welcome to the Snake Game! Current score: " + pointCounter);
   }
   
   public void updateFood (int foodValue) {
     String color = food.getFood().get(foodValue);
     colorQueue.add(color);
-    if (colorQueue.size() < 10) {
+    if (colorQueue.size() < 11) {
       decorateButton(foodQueue[colorQueue.size()-1][0], getColor(color));
     } else {
       colorQueue.remove();
@@ -116,19 +119,6 @@ public class SnakePanel extends JPanel {
     int pointValue = r.nextInt(5) + 1;
     String color = food.getFood().get(pointValue);
     decorateButton(pixels[y][x], getColor(color));
-//    if (color.equals("Red")) {
-//      decorateButton(pixels[y][x], Color.RED);
-//    } else if (color.equals("Orange")) {
-//      decorateButton(pixels[y][x], Color.ORANGE);
-//    } else if (color.equals("Yellow")) {
-//      decorateButton(pixels[y][x], Color.YELLOW);
-//    } else if (color.equals("Green")) {
-//      decorateButton(pixels[y][x], Color.GREEN);
-//    } else if (color.equals("Blue")) {
-//      decorateButton(pixels[y][x], Color.BLUE);
-//    } else {
-//      decorateButton(pixels[y][x], Color.MAGENTA);
-//    }
     return pointValue;
   }
   
@@ -138,25 +128,23 @@ public class SnakePanel extends JPanel {
    * @param   LinkedList body of snake
    */ 
   public void moveSnake (LinkedList<Location> body, Location tail) {
-    for (int i = 0; i < body.size(); i++) {
-      Location current = body.get(i);
-      int x = current.getX();
-      int y = current.getY();
-      decorateButton(pixels[y][x], Color.BLACK);
+    try {
+      for (int i = 0; i < body.size(); i++) {
+        Location current = body.get(i);
+        int x = current.getX();
+        int y = current.getY();
+        decorateButton(pixels[y][x], Color.BLACK);
+      }
+      
+      int tail_x = tail.getX();
+      int tail_y = tail.getY();
+      decorateButton(pixels[tail_y][tail_x], Color.WHITE);
+    } catch (ArrayIndexOutOfBoundsException ex) {
+      status.setText("Your snake died! Final score: " + pointCounter);
     }
-
-    int tail_x = tail.getX();
-    int tail_y = tail.getY();
-
-    decorateButton(pixels[tail_y][tail_x], Color.WHITE);
+    frame.requestFocus();
   }
   
-  // public void eraseTail (Location tail) {
-    
-
-    
-  // }
-
   /**
    * This method gets the current direction.
    *
@@ -166,7 +154,9 @@ public class SnakePanel extends JPanel {
     return this.directions.remove(); 
   }
   
-
+  public boolean getPaused () {
+    return paused;
+  }
   
   /**
    * Helper method: Decorates button with given background color.
@@ -274,45 +264,21 @@ public class SnakePanel extends JPanel {
       switch(keyCode){ 
         case KeyEvent.VK_UP:
           directions.add("U");
-          System.out.println("UP");
           break;
         case KeyEvent.VK_DOWN:
           directions.add("D");
-          System.out.println("DOWN");
           break;
         case KeyEvent.VK_LEFT:
           directions.add("L");
-          System.out.println("LEFT");
           break;
         case KeyEvent.VK_RIGHT:
           directions.add("R");
-          System.out.println("RIGHT");
           break;
       }
     }
     
     public void keyTyped(KeyEvent e) {
-      int keyCode = e.getKeyCode(); //getKeyCode returns the integer KeyCode associated with the key
-      directions.add("D");
-      
-      switch(keyCode){ 
-        case KeyEvent.VK_UP:
-          directions.add("U");
-          System.out.println("UP");
-          break;
-        case KeyEvent.VK_DOWN:
-          directions.add("D");
-          System.out.println("DOWN");
-          break;
-        case KeyEvent.VK_LEFT:
-          directions.add("L");
-          System.out.println("LEFT");
-          break;
-        case KeyEvent.VK_RIGHT:
-          directions.add("R");
-          System.out.println("RIGHT");
-          break;
-      }
+      keyPressed(e);
     }
     
     public void keyPressed(KeyEvent e) {
@@ -322,19 +288,15 @@ public class SnakePanel extends JPanel {
       switch(keyCode){ 
         case KeyEvent.VK_UP:
           directions.add("U");
-          System.out.println("UP");
           break;
         case KeyEvent.VK_DOWN:
           directions.add("D");
-          System.out.println("DOWN");
           break;
         case KeyEvent.VK_LEFT:
           directions.add("L");
-          System.out.println("LEFT");
           break;
         case KeyEvent.VK_RIGHT:
           directions.add("R");
-          System.out.println("RIGHT");
           break;
       }
     }
@@ -358,9 +320,10 @@ public class SnakePanel extends JPanel {
       if (event.getSource() == pause) {
         if (paused) {
           paused = false;
-          status.setText("Welcome to the Snake Game!"); // Continue the game, nothing here right now
+          status.setText("Welcome to the Snake Game! Current score: " + pointCounter); // Continue the game
+          frame.requestFocus();
         } else {
-          status.setText("Game paused.");
+          status.setText("Game paused. Current score: " + pointCounter);
           paused = true;
         }
       }

@@ -25,7 +25,6 @@ public class GameEngine {
   private Location foodLocation;
   private Location tail;
   private int foodValue;
-  private int minSnakeSize;
   
   
   /**
@@ -43,33 +42,23 @@ public class GameEngine {
     this.score = 0;    
     this.snake = new SnakeBody();
     this.direction = "D"; // Default direction
-    this.minSnakeSize = 2;
   } 
   
   /**
    * This method sets up the game and the game loop which will run
    * until the window is closed.
    *  
-   */
+   */  
   public void beginGame(){
     this.isNewGame = true;
     
     while (!isGameOver) {
-      long startTime = System.nanoTime(); //Precise start time for current frame
-
-      
-      
       tail = snake.getBody().getLast();
-      
-      
-      long time = (System.nanoTime() - startTime)/1000000L;
-        updateGame();
-
-      snakePanel.moveSnake(snake.getBody()); // This repaints the board
+      long startTime = System.nanoTime(); //Precise start time for current frame
+      snakePanel.moveSnake(snake.getBody(), tail);
       if (isNewGame) {
         foodValue = snakePanel.placeFood(spawnFood());
         isNewGame = false;
-
       }
       long time = (System.nanoTime() - startTime)/1000000L;
       updateGame();
@@ -85,6 +74,14 @@ public class GameEngine {
     }
   }
   
+  public void pause () {
+    try {
+      Thread.sleep(1);
+    } catch (InterruptedException ex) {
+      System.out.println("Error: " + ex);
+    }
+  }
+  
   public Location spawnFood() {
     random = new Random();
     foodLocation = new Location(random.nextInt(50), random.nextInt(50)); //Get random location for number of free spaces on board
@@ -93,19 +90,22 @@ public class GameEngine {
   
   public void updateGame(){
     
+    while (snakePanel.getPaused()) {
+      pause();
+    }
+    
     if (snake.isDead()){
       isGameOver = true;
+      System.out.println("Dead");
     }
 
     else if (snake.getBody().getFirst().equals(foodLocation)) { // When snake eats something
-      
       Location tail = snake.getBody().getLast();
       try {
         direction = snakePanel.getCurrentDirection();
         snake.move(direction);
       } catch (NoSuchElementException e) {
         snake.move(direction);
-        snakePanel.eraseTail(snake, direction);
       }
 
       snake.addSegment(tail);
@@ -119,7 +119,6 @@ public class GameEngine {
       try {
         direction = snakePanel.getCurrentDirection();
         snakePanel.moveSnake(snake.getBody(), tail);
-        // snakePanel.eraseTail(tail);
         snake.move(direction);
       } catch (NoSuchElementException e) {
         snakePanel.moveSnake(snake.getBody(), tail);
@@ -175,10 +174,6 @@ public class GameEngine {
   }
   
   public static void main(String[] args){
-//    Location i = new Location(2, 3);
-//    Location j = new Location(2, 3);
-//    System.out.println(i.equals(j));
-    
     GameEngine test = new GameEngine();
     test.beginGame();
 
