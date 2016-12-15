@@ -20,7 +20,7 @@ public class SnakePanel extends JPanel {
   private boolean paused; // Flag (indicates whether game is paused)
   private String pointCounter; // Supplement to status JLabel
   private Queue<String> directions; // Queue of directions
-  private LinkedList<String> colorQueue; // Queue of foods eaten
+  private LinkedList<String> colorQueue; // List of foods eaten
   
   private Food food; // Food hashtable
   
