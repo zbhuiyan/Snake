@@ -16,6 +16,7 @@ public class SnakeBody {
     body = new LinkedList<Location>();
     body.add(new Location(GAME_SIZE/2, GAME_SIZE/2));
     body.add(new Location(GAME_SIZE/2, GAME_SIZE/2 + 1));
+    // body.add(new Location(GAME_SIZE/2, GAME_SIZE/2 + 1));
   }
   
   public LinkedList<Location> getBody () {
@@ -31,6 +32,7 @@ public class SnakeBody {
       // setting each non-head component to the component after it.
       body.set(i, body.get(i-1));
     }
+
     //obtaining the head of the snake:
     Location head = body.get(0);
     Location new_head = head;
@@ -42,7 +44,7 @@ public class SnakeBody {
     } else if (direction.equals("U")) { //remember that up *subtracts* from the y-coordinate!
       new_head = new Location(head.getX(), head.getY() - 1);
     } else if (direction.equals("D")) {
-      new_head = new Location(head.getX(), head.getY() + 1);
+      new_head = new Location(head.getX(), head.getY() + 1); 
     }
     body.set(0, new_head);
   }
@@ -77,6 +79,10 @@ public class SnakeBody {
     body.add(tail);
   }
   
+  public int getSize(){
+    return body.size();
+  }
+
   /**
    * Get the string representation of the Snake Body
    */

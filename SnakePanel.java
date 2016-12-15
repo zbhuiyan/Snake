@@ -107,15 +107,26 @@ public class SnakePanel extends JPanel {
    * 
    * @param   LinkedList body of snake
    */ 
-  public void moveSnake (LinkedList<Location> body) {
+  public void moveSnake (LinkedList<Location> body, Location tail) {
     for (int i = 0; i < body.size(); i++) {
       Location current = body.get(i);
       int x = current.getX();
       int y = current.getY();
       decorateButton(pixels[y][x], Color.BLACK);
     }
+
+    int tail_x = tail.getX();
+    int tail_y = tail.getY();
+
+    decorateButton(pixels[tail_y][tail_x], Color.WHITE);
   }
   
+  // public void eraseTail (Location tail) {
+    
+
+    
+  // }
+
   /**
    * This method gets the current direction.
    *
@@ -125,20 +136,7 @@ public class SnakePanel extends JPanel {
     return this.directions.remove(); 
   }
   
-  public void eraseTail (SnakeBody body, String direction) {
-    Location tail = body.getBody().getLast();
-    int x = tail.getX();
-    int y = tail.getY();
-    if (direction.equals("D")) {
-      decorateButton(pixels[y-1][x], Color.WHITE);
-    } else if (direction.equals("U")) {
-      decorateButton(pixels[y+1][x], Color.WHITE);
-    } else if (direction.equals("R")) {
-      decorateButton(pixels[y][x-1], Color.WHITE);
-    } else if (direction.equals("L")) {
-      decorateButton(pixels[y][x+1], Color.WHITE);
-    }
-  }
+
   
   /**
    * Helper method: Decorates button with given background color.

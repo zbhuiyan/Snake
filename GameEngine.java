@@ -12,7 +12,7 @@ import java.lang.InterruptedException;
 public class GameEngine {
   
 // Instance variables
-  private static final long TIME_BETWEEN_FRAMES = 100000L / 50L; //Number of ms to pass between each frame.
+  private static final long TIME_BETWEEN_FRAMES = 10000L / 50L; //Number of ms to pass between each frame.
   private SnakePanel snakePanel;
   private Random random;
   private Clock clock;
@@ -24,7 +24,9 @@ public class GameEngine {
   private int score;
   private SnakeBody snake;
   private Location foodLocation;
+  private Location tail;
   private int foodValue;
+  private int minSnakeSize;
   
   
   /**
@@ -42,6 +44,7 @@ public class GameEngine {
     this.score = 0;    
     this.snake = new SnakeBody();
     this.direction = "D"; // Default direction
+    this.minSnakeSize = 2;
   } 
   
   /**
@@ -56,7 +59,11 @@ public class GameEngine {
     while (!isGameOver) {
       long startTime = System.nanoTime(); //Precise start time for current frame
       clock.updateClock();
-      snakePanel.moveSnake(snake.getBody()); // This repaints the board
+      
+      tail = snake.getBody().getLast();
+      
+      // System.out.println("tail" + tail);
+      // snakePanel.moveSnake(snake.getBody()); // This repaints the board
       
       long time = (System.nanoTime() - startTime)/1000000L;
       
@@ -89,7 +96,6 @@ public class GameEngine {
     }
     
     else if (snake.getBody().get(0).equals(foodLocation)) {
-      Location tail = snake.getBody().getLast();
       direction = snakePanel.getCurrentDirection();
       snake.move(direction);
       snake.addSegment(tail);
@@ -100,11 +106,13 @@ public class GameEngine {
     else {
       try {
         direction = snakePanel.getCurrentDirection();
+        snakePanel.moveSnake(snake.getBody(), tail);
+        // snakePanel.eraseTail(tail);
         snake.move(direction);
-        snakePanel.eraseTail(snake, direction);
       } catch (NoSuchElementException e) {
+        snakePanel.moveSnake(snake.getBody(), tail);
         snake.move(direction);
-        snakePanel.eraseTail(snake, direction);
+        System.out.println(snake.getBody());
       }
     }
   }
@@ -157,6 +165,6 @@ public class GameEngine {
   public static void main(String[] args){
     GameEngine test = new GameEngine();
     test.beginGame();
+
   }
-  
 }
