@@ -13,7 +13,7 @@ public class SnakePanel extends JPanel {
   
   // Instance variables
   private JFrame frame; // GUI frame
-  private JButton quit, start, pause; // Buttons
+  private JButton quit, pause; // Buttons
   private JButton[][] pixels, foodQueue; // "Grids" of buttons
   private JLabel status, foodpile; // Labels
   
@@ -35,12 +35,10 @@ public class SnakePanel extends JPanel {
     
     // Game state buttons
     quit = new JButton("Quit");
-    start = new JButton("Restart");
     pause = new JButton("Pause");
     
     // Decorate game state buttons
     decorateButton(quit, new Color(255, 51, 0));
-    decorateButton(start, new Color(51, 204, 51));
     decorateButton(pause, new Color(51, 102, 255));
     
     // Center panel (main gameplay) buttons
@@ -149,10 +147,15 @@ public class SnakePanel extends JPanel {
       int tail_y = tail.getY();
       decorateButton(pixels[tail_y][tail_x], Color.WHITE);
     } catch (ArrayIndexOutOfBoundsException ex) {
-      status.setText("Your snake died! Final score: " + pointCounter);
+      gameOver();
     }
     frame.requestFocus();
   }
+  
+  public void gameOver () {
+    status.setText("Oh no, your snake died! Final score: " + pointCounter);
+  }
+  
   
   /**
    * Retrieves the current direction.
@@ -206,8 +209,6 @@ public class SnakePanel extends JPanel {
     
     quit.addActionListener(new ButtonListener());
     southPanel.add(quit);
-    start.addActionListener(new ButtonListener());
-    southPanel.add(start);
     pause.addActionListener(new ButtonListener());
     southPanel.add(pause);
     return southPanel;
@@ -325,11 +326,6 @@ public class SnakePanel extends JPanel {
     public void actionPerformed (ActionEvent event) {
       if (event.getSource() == quit) {
         System.exit(0);
-      }
-      
-      if (event.getSource() == start) {
-        status.setText("Starting a new game...");
-        new SnakePanel(); 
       }
       
       if (event.getSource() == pause) {

@@ -70,7 +70,10 @@ public class SnakeBody {
    * Helper method for checking if the head intersects a part of its body?
    */
   private boolean hasDuplicates() {
-    return body.lastIndexOf(body.getFirst()) != 0;
+    for (int i = 1; i < body.size(); i++) {
+      if (body.getFirst().equals(body.get(i))) return true;
+    }
+    return false;
   }
 
   /**

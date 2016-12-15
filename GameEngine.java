@@ -113,6 +113,7 @@ public class GameEngine {
 
     if (snake.isDead()){
       isGameOver = true;
+      snakePanel.gameOver();
     }
 
     else if (snake.getBody().getFirst().equals(foodLocation)) { // When snake eats something
