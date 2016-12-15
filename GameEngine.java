@@ -3,7 +3,8 @@
  * The game engine is responsible for updating the game at specific
  * intervals, and in response to any event. It accepts user input
  * from the keyboard and handles the game's logic, game loop, and 
- * window creation.
+ * window creation. 
+ * Primarily worked on by: Zarin Bhuiyan, Emily Yeh, and Anne Ku
  */
 
 import java.util.*;
@@ -73,7 +74,11 @@ public class GameEngine {
       }
     }
   }
-  
+
+  /**
+   * This method tries to pause the game.
+   *  
+   */ 
   public void pause () {
     try {
       Thread.sleep(1);
@@ -82,32 +87,42 @@ public class GameEngine {
     }
   }
   
+
+  /**
+   * This method tries to pause the game.
+   *  
+   * @return Location
+   */ 
   public Location spawnFood() {
     random = new Random();
     foodLocation = new Location(random.nextInt(50), random.nextInt(50)); //Get random location for number of free spaces on board
     return foodLocation;
   } 
   
+  /**
+   * This method updates the game. It checks whether the game is paused, if the
+   * snake is dead, and if the snake has eaten a pixel of food.
+   *  
+   */ 
   public void updateGame(){
     
     while (snakePanel.getPaused()) {
       pause();
     }
-    
+
     if (snake.isDead()){
       isGameOver = true;
-      System.out.println("Dead");
     }
 
     else if (snake.getBody().getFirst().equals(foodLocation)) { // When snake eats something
       Location tail = snake.getBody().getLast();
+      
       try {
         direction = snakePanel.getCurrentDirection();
         snake.move(direction);
       } catch (NoSuchElementException e) {
-        snake.move(direction);
+          snake.move(direction);
       }
-
       snake.addSegment(tail);
       this.score += foodValue;
       snakePanel.updateFood(foodValue);
