@@ -52,12 +52,14 @@ public class GameEngine {
     this.isNewGame = true;
     
     while (!isGameOver) {
+      long startTime = System.nanoTime(); //Precise start time for current frame
       snakePanel.moveSnake(snake.getBody()); // This repaints the board
-        updateGame();
+      
+      long time = (System.nanoTime() - startTime)/1000000L;
+      updateGame();
       
       try {
         if (time < TIME_BETWEEN_FRAMES){
-          
           Thread.sleep(TIME_BETWEEN_FRAMES - time);
         }
       }
@@ -76,6 +78,7 @@ public class GameEngine {
   public void updateGame(){
     if (snake.isDead()){
       isGameOver = true;
+//      clock.pause(true);
     }
     
     else if (snake.getBody().get(0).equals(foodLocation)) {
