@@ -23,7 +23,9 @@ public class GameEngine {
   private int score;
   private SnakeBody snake;
   private Location foodLocation;
+  private Location tail;
   private int foodValue;
+  private int minSnakeSize;
   
   
   /**
@@ -41,6 +43,7 @@ public class GameEngine {
     this.score = 0;    
     this.snake = new SnakeBody();
     this.direction = "D"; // Default direction
+    this.minSnakeSize = 2;
   } 
   
   /**
@@ -53,10 +56,20 @@ public class GameEngine {
     
     while (!isGameOver) {
       long startTime = System.nanoTime(); //Precise start time for current frame
+
+      
+      
+      tail = snake.getBody().getLast();
+      
+      
+      long time = (System.nanoTime() - startTime)/1000000L;
+        updateGame();
+
       snakePanel.moveSnake(snake.getBody()); // This repaints the board
       if (isNewGame) {
         foodValue = snakePanel.placeFood(spawnFood());
         isNewGame = false;
+
       }
       long time = (System.nanoTime() - startTime)/1000000L;
       updateGame();
@@ -84,6 +97,7 @@ public class GameEngine {
       isGameOver = true;
     }
     
+
     else if (snake.getBody().getFirst().equals(foodLocation)) {
       Location tail = snake.getBody().getLast();
       try {
@@ -93,6 +107,7 @@ public class GameEngine {
         snake.move(direction);
         snakePanel.eraseTail(snake, direction);
       }
+
       snake.addSegment(tail);
       this.score += foodValue;
       snakePanel.updateScore(score);
@@ -102,11 +117,13 @@ public class GameEngine {
     else {
       try {
         direction = snakePanel.getCurrentDirection();
+        snakePanel.moveSnake(snake.getBody(), tail);
+        // snakePanel.eraseTail(tail);
         snake.move(direction);
-        snakePanel.eraseTail(snake, direction);
       } catch (NoSuchElementException e) {
+        snakePanel.moveSnake(snake.getBody(), tail);
         snake.move(direction);
-        snakePanel.eraseTail(snake, direction);
+        System.out.println(snake.getBody());
       }
     }
   }
@@ -163,6 +180,6 @@ public class GameEngine {
     
     GameEngine test = new GameEngine();
     test.beginGame();
+
   }
-  
 }
