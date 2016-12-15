@@ -1,3 +1,9 @@
+/**
+ * SnakePanel.java
+ * This class contains the GUI for the Snake game.
+ * Primarily worked on by Emily Yeh, Zarin Bhuiyan, and Anne Ku.
+ */
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -6,16 +12,18 @@ import java.util.*;
 public class SnakePanel extends JPanel {
   
   // Instance variables
-  private Food food;
+  private JFrame frame;
   private JButton quit, start, pause;
-  private JLabel status, foodpile;
-  private boolean paused;
   private JButton[][] pixels;
   private JButton[][] foodQueue;
+  private JLabel status, foodpile;
+  
+  private boolean paused;
+  private String pointCounter;
   private Queue<String> directions;
   private LinkedList<String> colorQueue;
-  private String pointCounter;
-  private JFrame frame;
+  
+  private Food food;
   
   /**
    * Constructor: Instantiates all instance variables.
@@ -31,6 +39,7 @@ public class SnakePanel extends JPanel {
     start = new JButton("Restart");
     pause = new JButton("Pause");
     
+    // Decorate game state buttons
     decorateButton(quit, new Color(255, 51, 0));
     decorateButton(start, new Color(51, 204, 51));
     decorateButton(pause, new Color(51, 102, 255));
@@ -73,23 +82,33 @@ public class SnakePanel extends JPanel {
     frame.add(makeEastPanel(), BorderLayout.EAST);
     frame.add(makeWestPanel(), BorderLayout.WEST);
     
-    // Keyboard binding/listening    
+    // Keyboard listening   
     SnakeKeyListener keyListener = new SnakeKeyListener();
     frame.addKeyListener(keyListener);
-    frame.requestFocus();
+    frame.requestFocus(); // Ensure keyboard presses are detected
   }
   
+  /**
+   * Updates game score in top of GUI.
+   * 
+   * @param   new score
+   */
   public void updateScore (int score) {
-    pointCounter = Integer.toString(score);
+    pointCounter = Integer.toString(score); // Update point counter
     status.setText("Welcome to the Snake Game! Current score: " + pointCounter);
   }
   
+  /**
+   * Updates food queue on side of GUI.
+   * 
+   * @param  point value of food (to look up in hash table)
+   */
   public void updateFood (int foodValue) {
     String color = food.getFood().get(foodValue);
     colorQueue.add(color);
-    if (colorQueue.size() < 11) {
+    if (colorQueue.size() < 11) { // Food queue can't be larger than 10 boxes
       decorateButton(foodQueue[colorQueue.size()-1][0], getColor(color));
-    } else {
+    } else { // Once food queue is larger than 10 boxes, dequeue and shift colors up
       colorQueue.remove();
       for (int i = 0; i < colorQueue.size(); i++) {
         decorateButton(foodQueue[i][0], getColor(colorQueue.get(i)));
@@ -97,21 +116,12 @@ public class SnakePanel extends JPanel {
     }
   }
   
-  private Color getColor (String color) {
-    if (color.equals("Red")) return Color.RED;
-    else if (color.equals("Orange")) return Color.ORANGE;
-    else if (color.equals("Yellow")) return Color.YELLOW;
-    else if (color.equals("Green")) return Color.GREEN;
-    else if (color.equals("Blue")) return Color.BLUE;
-    else return Color.MAGENTA;
-    }
-    
-  /*
+  /**
    * Places food in central panel.
    * 
    * @param   location of food
    * @return  point value of food placed
-   **/
+   */
   public int placeFood (Location location) {
     int x = location.getX();
     int y = location.getY();
@@ -146,7 +156,7 @@ public class SnakePanel extends JPanel {
   }
   
   /**
-   * This method gets the current direction.
+   * Retrieves the current direction.
    *
    * @return direction  
    */
@@ -154,6 +164,11 @@ public class SnakePanel extends JPanel {
     return this.directions.remove(); 
   }
   
+  /**
+   * Indicator of the state of the game (running vs. paused).
+   * 
+   * @return whether game is paused
+   */
   public boolean getPaused () {
     return paused;
   }
@@ -247,6 +262,21 @@ public class SnakePanel extends JPanel {
   }
   
   /**
+   * Helper method: Retrieves color to color a button with.
+   * 
+   * @param   intended color of button
+   * @return  java color value
+   */
+  private Color getColor (String color) {
+    if (color.equals("Red")) return Color.RED;
+    else if (color.equals("Orange")) return Color.ORANGE;
+    else if (color.equals("Yellow")) return Color.YELLOW;
+    else if (color.equals("Green")) return Color.GREEN;
+    else if (color.equals("Blue")) return Color.BLUE;
+    else return Color.MAGENTA;
+  }
+  
+  /**
    * Helper method: Creates west panel.
    * @return  West JPanel; doesn't contain anything
    */
@@ -256,29 +286,16 @@ public class SnakePanel extends JPanel {
     return westPanel;
   }
   
+  /**
+   * SnakeKeyListener is a private class that checks for new directions from user input.
+   */
   private class SnakeKeyListener implements KeyListener {
     public void keyReleased(KeyEvent e) {
-      int keyCode = e.getKeyCode(); //getKeyCode returns the integer KeyCode associated with the key
-      directions.add("D");
-      
-      switch(keyCode){ 
-        case KeyEvent.VK_UP:
-          directions.add("U");
-          break;
-        case KeyEvent.VK_DOWN:
-          directions.add("D");
-          break;
-        case KeyEvent.VK_LEFT:
-          directions.add("L");
-          break;
-        case KeyEvent.VK_RIGHT:
-          directions.add("R");
-          break;
-      }
+      keyPressed(e); // Do the same thing keyPressed does
     }
     
     public void keyTyped(KeyEvent e) {
-      keyPressed(e);
+      keyPressed(e); // Do the same thing keyPressed does
     }
     
     public void keyPressed(KeyEvent e) {
@@ -330,8 +347,10 @@ public class SnakePanel extends JPanel {
     }
   }
   
+  /**
+   * Main method (for debugging and testing).
+   */
   public static void main (String [] args) {
     new SnakePanel();
   }
-  
 }
