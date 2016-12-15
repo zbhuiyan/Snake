@@ -1,6 +1,8 @@
 /**
  * Clock.java
  * This class keeps track of how many cycles have passed throughout the game.
+ * Primarily worked on by: Zarin Bhuiyan
+ * We ended up not needing this class because it was unnecessary for our MVP functionality.
  */
 
 public class Clock {

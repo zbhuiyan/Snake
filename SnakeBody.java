@@ -1,6 +1,7 @@
 /**
  * SnakeBody class: given the current state of the Snake,
  * calculate the next state of the game.
+ * Primarily worked on by: Anne Ku, Emily Yeh, and Zarin Bhuiyan
  */
 
 import java.util.*; 
