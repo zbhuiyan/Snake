@@ -13,60 +13,61 @@ import java.lang.InterruptedException;
 public class GameEngine {
   
 // Instance variables
-  private static final long TIME_BETWEEN_FRAMES = 10000L / 50L; //Number of ms to pass between each frame.
-  private SnakePanel snakePanel;
+  private SnakePanel snakePanel; // GUI
+  private SnakeBody snake; // Snake characteristics
+  private Location foodLocation, tail; // Locations of food and snake tail
+  
+  private long time_between_frames, speedFactor; // Number of ms to pass between each frame, speed factor
+  private boolean isNewGame, isGameOver, isPaused; // Boolean flags for game states
+  private String direction; // Indicates direction for snake to go
+  private int score, foodValue; // Current score, point value of food
+  
   private Random random;
-  private boolean isNewGame;
-  private boolean isGameOver;
-  private boolean isPaused;
-  private String direction;
-  private int numFoodEaten;
-  private int score;
-  private SnakeBody snake;
-  private Location foodLocation;
-  private Location tail;
-  private int foodValue;
-  
-  
+
   /**
    * Here we create a constructor to make a new GameEngine. 
    * It utilizes the KeyAdapter abstract class which allows the
    * program to read the user's keyboard inputs.
    * 
    */
-  public GameEngine(){
-    this.snakePanel = new SnakePanel(); //Initialize game panels.
+  public GameEngine() {
+    this.snakePanel = new SnakePanel(); // Initialize game panels
+    this.snake = new SnakeBody();
+    this.time_between_frames = 10000L / 50L; // Default time between frames
     this.isNewGame = false;
     this.isGameOver = false;
-    this.isPaused = false;
-    this.numFoodEaten = 0;
-    this.score = 0;    
-    this.snake = new SnakeBody();
+    this.isPaused = false;  
     this.direction = "D"; // Default direction
+    this.score = 0;
+    this.foodValue = 0;
+    this.speedFactor = 1;
   } 
   
   /**
    * This method sets up the game and the game loop which will run
    * until the window is closed.
-   *  
    */  
-  public void beginGame(){
+  public void beginGame () {
     this.isNewGame = true;
     
     while (!isGameOver) {
-      tail = snake.getBody().getLast();
-      long startTime = System.nanoTime(); //Precise start time for current frame
-      snakePanel.moveSnake(snake.getBody(), tail);
+      tail = snake.getBody().getLast(); // Retrieve snake tail
+      long startTime = System.nanoTime(); // Precise start time for current frame
+      snakePanel.moveSnake(snake.getBody(), tail); // Move the snake in the GUI
+      
       if (isNewGame) {
-        foodValue = snakePanel.placeFood(spawnFood());
+        foodValue = snakePanel.placeFood(spawnFood()); // Place food if new game
         isNewGame = false;
       }
-      long time = (System.nanoTime() - startTime)/1000000L;
-      updateGame();
       
-      try {
-        if (time < TIME_BETWEEN_FRAMES){
-          Thread.sleep(TIME_BETWEEN_FRAMES - time);
+      long time = (System.nanoTime() - startTime)/1000000L; // Retrieve time elapsed
+      updateGame(); // Update the game
+      
+      try { // Wait time between frames
+        if ((time < time_between_frames) && ((time_between_frames - time - speedFactor) > 50)) {
+          Thread.sleep((time_between_frames - time) - speedFactor); // Sleep for X milliseconds
+        } else if ((time < time_between_frames) && ((time_between_frames - time - speedFactor) < 50)) {
+          Thread.sleep(50);
         }
       }
       catch(InterruptedException ex){
@@ -128,6 +129,7 @@ public class GameEngine {
       snakePanel.updateFood(foodValue);
       snakePanel.updateScore(score);
       foodValue = snakePanel.placeFood(spawnFood());
+      speedFactor += 50;
     }
     
     else {
@@ -138,7 +140,6 @@ public class GameEngine {
       } catch (NoSuchElementException e) {
         snakePanel.moveSnake(snake.getBody(), tail);
         snake.move(direction);
-        System.out.println(snake.getBody());
       }
     }
   }
@@ -150,15 +151,6 @@ public class GameEngine {
    */
   public int getScore(){
     return this.score;
-  }
-  
-  /**
-   * This method gets the number of food eaten thus far.
-   *
-   * @return int numFoodEaten 
-   */
-  public int getNumFoodEaten(){
-    return this.numFoodEaten;
   }
   
   /**
