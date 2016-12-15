@@ -54,7 +54,10 @@ public class GameEngine {
     while (!isGameOver) {
       long startTime = System.nanoTime(); //Precise start time for current frame
       snakePanel.moveSnake(snake.getBody()); // This repaints the board
-      
+      if (isNewGame) {
+        foodValue = snakePanel.placeFood(spawnFood());
+        isNewGame = false;
+      }
       long time = (System.nanoTime() - startTime)/1000000L;
       updateGame();
       
@@ -70,24 +73,30 @@ public class GameEngine {
   }
   
   public Location spawnFood() {
-    this.random = new Random();
-    this.foodLocation = new Location(random.nextInt(50), random.nextInt(50)); //Get random location for number of free spaces on board
-    return this.foodLocation;
+    random = new Random();
+    foodLocation = new Location(random.nextInt(50), random.nextInt(50)); //Get random location for number of free spaces on board
+    return foodLocation;
   } 
   
   public void updateGame(){
+    
     if (snake.isDead()){
       isGameOver = true;
-//      clock.pause(true);
     }
     
-    else if (snake.getBody().get(0).equals(foodLocation)) {
+    else if (snake.getBody().getFirst().equals(foodLocation)) {
       Location tail = snake.getBody().getLast();
-      direction = snakePanel.getCurrentDirection();
-      snake.move(direction);
+      try {
+        direction = snakePanel.getCurrentDirection();
+        snake.move(direction);
+      } catch (NoSuchElementException e) {
+        snake.move(direction);
+        snakePanel.eraseTail(snake, direction);
+      }
       snake.addSegment(tail);
       this.score += foodValue;
-      snakePanel.placeFood(this.spawnFood());
+      snakePanel.updateScore(score);
+      snakePanel.placeFood(spawnFood());
     }
     
     else {
@@ -148,6 +157,10 @@ public class GameEngine {
   }
   
   public static void main(String[] args){
+//    Location i = new Location(2, 3);
+//    Location j = new Location(2, 3);
+//    System.out.println(i.equals(j));
+    
     GameEngine test = new GameEngine();
     test.beginGame();
   }
