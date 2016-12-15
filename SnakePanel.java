@@ -12,18 +12,17 @@ import java.util.*;
 public class SnakePanel extends JPanel {
   
   // Instance variables
-  private JFrame frame;
-  private JButton quit, start, pause;
-  private JButton[][] pixels;
-  private JButton[][] foodQueue;
-  private JLabel status, foodpile;
+  private JFrame frame; // GUI frame
+  private JButton quit, start, pause; // Buttons
+  private JButton[][] pixels, foodQueue; // "Grids" of buttons
+  private JLabel status, foodpile; // Labels
   
-  private boolean paused;
-  private String pointCounter;
-  private Queue<String> directions;
-  private LinkedList<String> colorQueue;
+  private boolean paused; // Flag (indicates whether game is paused)
+  private String pointCounter; // Supplement to status JLabel
+  private Queue<String> directions; // Queue of directions
+  private LinkedList<String> colorQueue; // Queue of foods eaten
   
-  private Food food;
+  private Food food; // Food hashtable
   
   /**
    * Constructor: Instantiates all instance variables.
@@ -153,7 +152,6 @@ public class SnakePanel extends JPanel {
       status.setText("Your snake died! Final score: " + pointCounter);
     }
     frame.requestFocus();
-    System.out.println(directions);
   }
   
   /**
