@@ -15,7 +15,6 @@ public class GameEngine {
   private static final long TIME_BETWEEN_FRAMES = 10000L / 50L; //Number of ms to pass between each frame.
   private SnakePanel snakePanel;
   private Random random;
-  private Clock clock;
   private boolean isNewGame;
   private boolean isGameOver;
   private boolean isPaused;
@@ -53,27 +52,30 @@ public class GameEngine {
    *  
    */
   public void beginGame(){
-    clock = new Clock(3.0f);
     this.isNewGame = true;
     
     while (!isGameOver) {
       long startTime = System.nanoTime(); //Precise start time for current frame
-      clock.updateClock();
+
+      
       
       tail = snake.getBody().getLast();
       
-      // System.out.println("tail" + tail);
-      // snakePanel.moveSnake(snake.getBody()); // This repaints the board
       
       long time = (System.nanoTime() - startTime)/1000000L;
-      
-      if (clock.hasPassedCycle()){
         updateGame();
+
+      snakePanel.moveSnake(snake.getBody()); // This repaints the board
+      if (isNewGame) {
+        foodValue = snakePanel.placeFood(spawnFood());
+        isNewGame = false;
+
       }
+      long time = (System.nanoTime() - startTime)/1000000L;
+      updateGame();
       
       try {
         if (time < TIME_BETWEEN_FRAMES){
-          
           Thread.sleep(TIME_BETWEEN_FRAMES - time);
         }
       }
@@ -84,23 +86,32 @@ public class GameEngine {
   }
   
   public Location spawnFood() {
-    this.random = new Random();
-    this.foodLocation = new Location(random.nextInt(50), random.nextInt(50)); //Get random location for number of free spaces on board
-    return this.foodLocation;
+    random = new Random();
+    foodLocation = new Location(random.nextInt(50), random.nextInt(50)); //Get random location for number of free spaces on board
+    return foodLocation;
   } 
   
   public void updateGame(){
+    
     if (snake.isDead()){
       isGameOver = true;
-      clock.pause(true);
     }
     
-    else if (snake.getBody().get(0).equals(foodLocation)) {
-      direction = snakePanel.getCurrentDirection();
-      snake.move(direction);
+
+    else if (snake.getBody().getFirst().equals(foodLocation)) {
+      Location tail = snake.getBody().getLast();
+      try {
+        direction = snakePanel.getCurrentDirection();
+        snake.move(direction);
+      } catch (NoSuchElementException e) {
+        snake.move(direction);
+        snakePanel.eraseTail(snake, direction);
+      }
+
       snake.addSegment(tail);
       this.score += foodValue;
-      this.spawnFood();
+      snakePanel.updateScore(score);
+      snakePanel.placeFood(spawnFood());
     }
     
     else {
@@ -163,6 +174,10 @@ public class GameEngine {
   }
   
   public static void main(String[] args){
+//    Location i = new Location(2, 3);
+//    Location j = new Location(2, 3);
+//    System.out.println(i.equals(j));
+    
     GameEngine test = new GameEngine();
     test.beginGame();
 

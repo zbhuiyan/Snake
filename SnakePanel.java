@@ -69,9 +69,14 @@ public class SnakePanel extends JPanel {
     frame.add(makeEastPanel(), BorderLayout.EAST);
     frame.add(makeWestPanel(), BorderLayout.WEST);
     
+    // Keyboard binding/listening    
     SnakeKeyListener keyListener = new SnakeKeyListener();
     frame.addKeyListener(keyListener);
     frame.requestFocus();
+  }
+  
+  public void updateScore (int score) {
+    status.setText("Welcome to the Snake Game! Current score: " + Integer.toString(score));
   }
   
   /*
@@ -236,13 +241,55 @@ public class SnakePanel extends JPanel {
     return westPanel;
   }
   
-  
-  
   private class SnakeKeyListener implements KeyListener {
     public void keyReleased(KeyEvent e) {
+      int keyCode = e.getKeyCode(); //getKeyCode returns the integer KeyCode associated with the key
+      directions.add("D");
+      
+      switch(keyCode){ 
+        case KeyEvent.VK_UP:
+          directions.add("U");
+          System.out.println("UP");
+          break;
+        case KeyEvent.VK_DOWN:
+          directions.add("D");
+          System.out.println("DOWN");
+          break;
+        case KeyEvent.VK_LEFT:
+          directions.add("L");
+          System.out.println("LEFT");
+          break;
+        case KeyEvent.VK_RIGHT:
+          directions.add("R");
+          System.out.println("RIGHT");
+          break;
+      }
     }
+    
     public void keyTyped(KeyEvent e) {
+      int keyCode = e.getKeyCode(); //getKeyCode returns the integer KeyCode associated with the key
+      directions.add("D");
+      
+      switch(keyCode){ 
+        case KeyEvent.VK_UP:
+          directions.add("U");
+          System.out.println("UP");
+          break;
+        case KeyEvent.VK_DOWN:
+          directions.add("D");
+          System.out.println("DOWN");
+          break;
+        case KeyEvent.VK_LEFT:
+          directions.add("L");
+          System.out.println("LEFT");
+          break;
+        case KeyEvent.VK_RIGHT:
+          directions.add("R");
+          System.out.println("RIGHT");
+          break;
+      }
     }
+    
     public void keyPressed(KeyEvent e) {
       int keyCode = e.getKeyCode(); //getKeyCode returns the integer KeyCode associated with the key
       directions.add("D");
