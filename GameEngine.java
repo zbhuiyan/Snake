@@ -96,9 +96,9 @@ public class GameEngine {
     if (snake.isDead()){
       isGameOver = true;
     }
-    
 
-    else if (snake.getBody().getFirst().equals(foodLocation)) {
+    else if (snake.getBody().getFirst().equals(foodLocation)) { // When snake eats something
+      
       Location tail = snake.getBody().getLast();
       try {
         direction = snakePanel.getCurrentDirection();
@@ -110,8 +110,9 @@ public class GameEngine {
 
       snake.addSegment(tail);
       this.score += foodValue;
+      snakePanel.updateFood(foodValue);
       snakePanel.updateScore(score);
-      snakePanel.placeFood(spawnFood());
+      foodValue = snakePanel.placeFood(spawnFood());
     }
     
     else {

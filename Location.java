@@ -32,6 +32,13 @@ public class Location {
     this.y = y;
   }
   
+  public boolean equals (Location other) {
+    int otherX = other.getX();
+    int otherY = other.getY();
+    if ((x == otherX) && (y == otherY)) return true;
+    else return false;
+  }
+    
   /**
    * Returns a String representation of the location class
    */

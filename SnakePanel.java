@@ -13,12 +13,14 @@ public class SnakePanel extends JPanel {
   private JButton[][] pixels;
   private JButton[][] foodQueue;
   private Queue<String> directions;
+  private LinkedList<String> colorQueue;
   
   /**
    * Constructor: Instantiates all instance variables.
    */
   public SnakePanel() {
     directions = new LinkedList<String>();
+    colorQueue = new LinkedList<String>();
     food = new Food();
     paused = false;
     
@@ -79,6 +81,28 @@ public class SnakePanel extends JPanel {
     status.setText("Welcome to the Snake Game! Current score: " + Integer.toString(score));
   }
   
+  public void updateFood (int foodValue) {
+    String color = food.getFood().get(foodValue);
+    colorQueue.add(color);
+    if (colorQueue.size() < 10) {
+      decorateButton(foodQueue[colorQueue.size()-1][0], getColor(color));
+    } else {
+      colorQueue.remove();
+      for (int i = 0; i < colorQueue.size(); i++) {
+        decorateButton(foodQueue[i][0], getColor(colorQueue.get(i)));
+      }
+    }
+  }
+  
+  private Color getColor (String color) {
+    if (color.equals("Red")) return Color.RED;
+    else if (color.equals("Orange")) return Color.ORANGE;
+    else if (color.equals("Yellow")) return Color.YELLOW;
+    else if (color.equals("Green")) return Color.GREEN;
+    else if (color.equals("Blue")) return Color.BLUE;
+    else return Color.MAGENTA;
+    }
+    
   /*
    * Places food in central panel.
    * 
@@ -91,19 +115,20 @@ public class SnakePanel extends JPanel {
     Random r = new Random();
     int pointValue = r.nextInt(5) + 1;
     String color = food.getFood().get(pointValue);
-    if (color.equals("Red")) {
-      decorateButton(pixels[y][x], Color.RED);
-    } else if (color.equals("Orange")) {
-      decorateButton(pixels[y][x], Color.ORANGE);
-    } else if (color.equals("Yellow")) {
-      decorateButton(pixels[y][x], Color.YELLOW);
-    } else if (color.equals("Green")) {
-      decorateButton(pixels[y][x], Color.GREEN);
-    } else if (color.equals("Blue")) {
-      decorateButton(pixels[y][x], Color.BLUE);
-    } else {
-      decorateButton(pixels[y][x], Color.MAGENTA);
-    }
+    decorateButton(pixels[y][x], getColor(color));
+//    if (color.equals("Red")) {
+//      decorateButton(pixels[y][x], Color.RED);
+//    } else if (color.equals("Orange")) {
+//      decorateButton(pixels[y][x], Color.ORANGE);
+//    } else if (color.equals("Yellow")) {
+//      decorateButton(pixels[y][x], Color.YELLOW);
+//    } else if (color.equals("Green")) {
+//      decorateButton(pixels[y][x], Color.GREEN);
+//    } else if (color.equals("Blue")) {
+//      decorateButton(pixels[y][x], Color.BLUE);
+//    } else {
+//      decorateButton(pixels[y][x], Color.MAGENTA);
+//    }
     return pointValue;
   }
   
