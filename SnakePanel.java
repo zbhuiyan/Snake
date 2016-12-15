@@ -153,6 +153,7 @@ public class SnakePanel extends JPanel {
       status.setText("Your snake died! Final score: " + pointCounter);
     }
     frame.requestFocus();
+    System.out.println(directions);
   }
   
   /**
@@ -300,7 +301,6 @@ public class SnakePanel extends JPanel {
     
     public void keyPressed(KeyEvent e) {
       int keyCode = e.getKeyCode(); //getKeyCode returns the integer KeyCode associated with the key
-      directions.add("D");
       
       switch(keyCode){ 
         case KeyEvent.VK_UP:
